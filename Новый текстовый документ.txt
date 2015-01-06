@@ -1,0 +1,130 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Akim
+ * Date: 05.01.15
+ * Time: 23:03
+ */
+
+
+class Color
+{
+    public $red;
+    public $green;
+    public $blue;
+
+    function __construct($red,$green,$blue)
+    {
+        $this->red   =  $red ;
+        $this->green =  $green;
+        $this->blue  =  $blue ;
+    }
+}
+abstract class Component
+{
+    public $color;
+    public $width;
+    public $height;
+    abstract public function render();
+}
+
+
+class Rectangle extends Component
+{
+    function __construct($color, $width, $height)
+    {
+        $this->color =  $color;
+        $this->width =  $width ;
+        $this->height=  $height;
+    }
+
+    function render()
+    {
+        echo '<div
+                    style="background-color:RGB('.$this->color->red.','.$this->color->green.','.$this->color->blue.');
+                    width:'.$this->width.'px;
+                    height:'.$this->height.'px"&gt;</div>';
+    }
+
+}
+$color = new Color(127,0,0);
+$rect = new Rectangle($color, 100, 50);
+$rect->render();
+
+class BorderedRectangle extends Rectangle
+{
+    public $borderColor;
+    function __construct($color, $width, $height, $borderColor)
+    {
+        parent::__construct($color, $width, $height);
+        $this->borderColor = $borderColor;
+
+    }
+
+    function render()
+    {
+        echo '<div
+        style="background-color:rgb('.$this->color->red.','.$this->color->green.','.$this->color->blue.');
+        width:'.$this->width.'px;
+        height:'.$this->height.'px;border: 3px solid '.$this->borderColor.';"&gt;</div>';
+    }
+}
+
+class PositionedRectangle extends Rectangle
+{
+    public $X;
+    public $Y;
+    function __construct($color, $width, $height, $X, $Y)
+    {
+        parent::__construct($color, $width, $height);
+        $this->X = $X;
+        $this->Y = $Y;
+    }
+    function render()
+    {
+        echo '<div
+        style="background-color:rgb('.$this->color->red.','.$this->color->green.','.$this->color->blue.');
+        width:'.$this->width.'px;
+        height:'.$this->height.'px;
+        position:absolute;left:'.$this->X.';top:'.$this->Y.' "&gt;</div>';
+    }
+}
+$color2 = new Color(100,50,100);
+$borderRect = new BorderedRectangle($color2,200,200,' red');
+$borderRect->render();
+$color3 = new Color(150,150,20);
+$posRect = new PositionedRectangle($color3,200,200 ,350,400);
+$posRect->render();
+
+class Renderer
+{
+    public $compArray = array();
+    function __construct($obArray)
+    {
+        $this->compArray = $obArray;
+    }
+    function render()
+    {
+
+
+        for($i=0;$i<sizeof($this->compArray);$i++)
+        {
+             echo '<br/>'; echo '<br/>'; echo '<br/>';
+
+            echo '<div
+                    style="background-color:RGB('
+                   . $this->compArray[$i]->color->red .','
+                   . $this->compArray[$i]->color->green .','
+                   . $this->compArray[$i]->color->blue .');
+                    width:'.$this->compArray[$i]->width.  'px;
+                    height:'.$this->compArray[$i]-> height.'px;
+                    position:absolute;left:'.($this->compArray[$i]->width+10).  ' ; "&gt;</div>';
+            echo '<br/>';
+        }
+
+    }
+}
+
+$obj_array = array($posRect,$borderRect);
+$rend = new Renderer($obj_array);
+$rend->render();
